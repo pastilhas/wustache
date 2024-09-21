@@ -59,7 +59,7 @@ fn (t Template) render_conditional(result string, ctx map[string]WValue) !string
 		if val := ctx[k1] {
 			iter := n_iter(val)
 			arr := []string{len: iter, init: content}
-			res = res.replace(m, arr.join('\n'))
+			res = res.replace(m, arr.join(''))
 		}
 	}
 
