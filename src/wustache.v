@@ -1,5 +1,7 @@
 module main
 
+import x.json2
+
 const pos_section = `#`
 const neg_section = `^`
 const raw_var = `&`
@@ -8,6 +10,48 @@ const iter_var = '$'
 pub type Value = string | bool | []Value | map[string]Value
 
 pub type Context = map[string]Value
+
+pub struct Opts {
+	allow_empty   bool = true
+	ignore_errors bool = false
+	print_logs    bool = false
+}
+
+pub fn Context.from_json(json string) !Context {
+	root := json2.raw_decode(json)!
+	mut val := decode(root)!
+
+	if mut val is map[string]Value {
+		return val
+	} else {
+		return error('json is not map of values')
+	}
+}
+
+fn decode(node json2.Any) !Value {
+	return match node {
+		bool, string {
+			Value(node)
+		}
+		[]json2.Any {
+			mut child := []Value{cap: node.len}
+			for it in node {
+				child << decode(it)!
+			}
+			child
+		}
+		map[string]json2.Any {
+			mut child := map[string]Value{}
+			for key, val in node {
+				child[key] = decode(val)!
+			}
+			child
+		}
+		else {
+			return error('Unsupported type: ${typeof(node).name}')
+		}
+	}
+}
 
 pub fn render(template string, ctx Context) !string {
 	return render_section(template, ctx)!
