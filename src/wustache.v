@@ -1,5 +1,6 @@
 module wustache
 
+import encoding.html
 import x.json2
 
 const pos_section = `#`
@@ -183,7 +184,7 @@ fn render_section(template string, ctx Context) !string {
 			}
 			else {
 				if val := lookup(tag, ctx) {
-					result += escape_html(val2str(val))
+					result += html.escape(val2str(val))
 				}
 			}
 		}
@@ -209,10 +210,6 @@ fn lookup(key string, ctx Context) ?Value {
 	}
 
 	return current
-}
-
-fn escape_html(html string) string {
-	return html
 }
 
 fn val2str(value Value) string {
