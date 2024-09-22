@@ -32,7 +32,7 @@ fn render_section(template string, ctx Context) !string {
 			temp = temp[(j + etag.len)..]
 			pointer += j + stag.len
 		} else {
-			return error('Missing end tag at ${pointer}')
+			return error('Missing end delimiter at ${pointer}')
 		}
 
 		if tag.len == 0 {
@@ -42,16 +42,95 @@ fn render_section(template string, ctx Context) !string {
 
 		match tag[0] {
 			`#` {
-				println('Not implemented')
+				section := tag[1..]
+				end :=  '${stag}/${section}${etag}'
+				mut content := ''
+				if i := temp.index(end) {
+					content = temp[..i]
+					temp = temp[(i+end.len)..]
+					pointer += i + end.len
+				} else {
+					return error('Missing end tag for ${section} at ${pointer}')
+				}
+
+				if val := lookup(section, ctx) {
+					match val {
+						string {
+							if val.len > 0 {
+								sec := render_section(content, ctx)!
+								result += sec
+							}
+						}
+						bool {
+							if val {
+								sec := render_section(content, ctx)!
+								result += sec
+							}
+						}
+						[]Value {
+							for it in val {
+								mut new_ctx := ctx.clone()
+								new_ctx['/it'] = it
+								sec := render_section(content, new_ctx)!
+								result += sec
+							}
+						}
+						map[string]Value {
+							if val.keys().len > 0 {
+								mut new_ctx := ctx.clone()
+								new_ctx['/it'] = val
+								sec := render_section(content, new_ctx)!
+								result += sec
+							}
+						}
+					}
+				}
 			}
 			`^` {
-				println('Not implemented')
+				section := tag[1..]
+				end :=  '${stag}/${section}${etag}'
+				mut content := ''
+				if i := temp.index(end) {
+					content = temp[..i]
+					temp = temp[(i+end.len)..]
+					pointer += i + end.len
+				} else {
+					return error('Missing end tag for ${section} at ${pointer}')
+				}
+
+				if val := lookup(section, ctx) {
+					match val {
+						string {
+							if val.len == 0 {
+								sec := render_section(content, ctx)!
+								result += sec
+							}
+						}
+						bool {
+							if !val {
+								sec := render_section(content, ctx)!
+								result += sec
+							}
+						}
+						[]Value {
+							if val.len == 0 {
+								sec := render_section(content, ctx)!
+								result += sec
+							}
+						}
+						map[string]Value {
+							if val.keys().len == 0 {
+								sec := render_section(content, ctx)!
+								result += sec
+							}
+						}
+					}
+				}
 			}
 			`&` {
-				println('Not implemented')
-			}
-			`{` {
-				println('Not implemented')
+				if val := lookup(tag[1..], ctx) {
+					result += val2str(val)
+				}
 			}
 			else {
 				if val := lookup(tag, ctx) {
