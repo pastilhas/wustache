@@ -1,5 +1,10 @@
 module main
 
+const pos_section = `#`
+const neg_section = `^`
+const raw_var = `&`
+const iter_var = '$'
+
 pub type Value = string | bool | []Value | map[string]Value
 
 pub type Context = map[string]Value
@@ -41,13 +46,13 @@ fn render_section(template string, ctx Context) !string {
 		}
 
 		match tag[0] {
-			`#` {
+			pos_section {
 				section := tag[1..]
-				end :=  '${stag}/${section}${etag}'
+				end := '${stag}/${section}${etag}'
 				mut content := ''
 				if i := temp.index(end) {
 					content = temp[..i]
-					temp = temp[(i+end.len)..]
+					temp = temp[(i + end.len)..]
 					pointer += i + end.len
 				} else {
 					return error('Missing end tag for ${section} at ${pointer}')
@@ -70,7 +75,7 @@ fn render_section(template string, ctx Context) !string {
 						[]Value {
 							for it in val {
 								mut new_ctx := ctx.clone()
-								new_ctx['/it'] = it
+								new_ctx[iter_var] = it
 								sec := render_section(content, new_ctx)!
 								result += sec
 							}
@@ -78,7 +83,7 @@ fn render_section(template string, ctx Context) !string {
 						map[string]Value {
 							if val.keys().len > 0 {
 								mut new_ctx := ctx.clone()
-								new_ctx['/it'] = val
+								new_ctx[iter_var] = val
 								sec := render_section(content, new_ctx)!
 								result += sec
 							}
@@ -86,13 +91,13 @@ fn render_section(template string, ctx Context) !string {
 					}
 				}
 			}
-			`^` {
+			neg_section {
 				section := tag[1..]
-				end :=  '${stag}/${section}${etag}'
+				end := '${stag}/${section}${etag}'
 				mut content := ''
 				if i := temp.index(end) {
 					content = temp[..i]
-					temp = temp[(i+end.len)..]
+					temp = temp[(i + end.len)..]
 					pointer += i + end.len
 				} else {
 					return error('Missing end tag for ${section} at ${pointer}')
@@ -127,7 +132,7 @@ fn render_section(template string, ctx Context) !string {
 					}
 				}
 			}
-			`&` {
+			raw_var {
 				if val := lookup(tag[1..], ctx) {
 					result += val2str(val)
 				}
