@@ -1,7 +1,7 @@
 module wustache
 
 import encoding.html
-import x.json2
+import x.json2 { Any, raw_decode }
 
 const pos_section = `#`
 const neg_section = `^`
@@ -18,30 +18,30 @@ pub struct Opts {
 	print_logs    bool = false
 }
 
-pub fn Context.from_json(json string) !Context {
-	root := json2.raw_decode(json)!
+pub fn from_json(json string) !Context {
+	root := raw_decode(json)!
 	mut val := decode(root)!
 
-	if mut val is map[string]Value {
-		return val
+	return if mut val is map[string]Value {
+		val
 	} else {
-		return error('json is not map of values')
+		error('Not a map object')
 	}
 }
 
-fn decode(node json2.Any) !Value {
+fn decode(node Any) !Value {
 	return match node {
 		bool, string {
 			Value(node)
 		}
-		[]json2.Any {
+		[]Any {
 			mut child := []Value{cap: node.len}
 			for it in node {
 				child << decode(it)!
 			}
 			child
 		}
-		map[string]json2.Any {
+		map[string]Any {
 			mut child := map[string]Value{}
 			for key, val in node {
 				child[key] = decode(val)!
