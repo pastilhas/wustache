@@ -49,7 +49,7 @@ fn decode(node Any) !Value {
 			child
 		}
 		else {
-			return error('Unsupported type: ${typeof(node).name}')
+			node.str()
 		}
 	}
 }
@@ -106,7 +106,7 @@ fn render_section(template string, ctx Context) !string {
 				if val := lookup(section, ctx) {
 					match val {
 						string {
-							if val.len > 0 {
+							if val.len > 0 && val != '0' && val != '0.0' {
 								sec := render_section(content, ctx)!
 								result += sec
 							}
