@@ -1,6 +1,6 @@
 module main
 
-pub type Value = string | int | f32 | f64 | bool | []Value | map[string]Value
+pub type Value = string | bool | []Value | map[string]Value
 
 pub type Context = map[string]Value
 
@@ -91,15 +91,6 @@ fn val2str(value Value) string {
 	return match value {
 		string {
 			value
-		}
-		int {
-			value.str()
-		}
-		f32 {
-			value.str()
-		}
-		f64 {
-			value.str()
 		}
 		bool {
 			value.str()
