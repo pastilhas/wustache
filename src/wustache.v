@@ -54,7 +54,9 @@ fn render_section(template string, ctx Context) !string {
 				println('Not implemented')
 			}
 			else {
-				println('Not implemented')
+				if val := lookup(tag, ctx) {
+					result += escape_html(val2str(val))
+				}
 			}
 		}
 	}
@@ -79,4 +81,34 @@ fn lookup(key string, ctx Context) ?Value {
 	}
 
 	return current
+}
+
+fn escape_html(html string) string {
+	return html
+}
+
+fn val2str(value Value) string {
+	return match value {
+		string {
+			value
+		}
+		int {
+			value.str()
+		}
+		f32 {
+			value.str()
+		}
+		f64 {
+			value.str()
+		}
+		bool {
+			value.str()
+		}
+		[]Value {
+			value.map(val2str).join(', ')
+		}
+		map[string]Value {
+			'{${value.keys().join(', ')}}'
+		}
+	}
 }
