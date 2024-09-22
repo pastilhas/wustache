@@ -1,4 +1,4 @@
-module main
+module wustache
 
 import x.json2
 
