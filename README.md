@@ -3,8 +3,18 @@
 
 <h1>WUSTACHE</h1>
 
-[![Built][BuiltBadge]][BuiltUrl]
-[![WIP][WIPBadge]](#)
+<a href="https://vlang.io/">
+
+![](https://img.shields.io/badge/Vlang-gray?style=for-the-badge&logo=v)
+
+</a>
+
+<a href="#">
+
+![](https://img.shields.io/badge/WORK%20IN%20PROGRESS-%20rgb(255%2C%20172%2C%2028)%20?style=for-the-badge)
+
+</a>
+
 </div>
 
 Wustache is a lightweight and efficient Mustache-like templating engine
@@ -87,7 +97,3 @@ Repeats `content` {0, 1} times
 ## License
 
 Wustache is released under the MIT License. See the LICENSE file for details.
-
-[BuiltUrl]: https://vlang.io/
-[BuiltBadge]: https://img.shields.io/badge/Vlang-gray?style=for-the-badge&logo=v
-[WIPBadge]: https://img.shields.io/badge/WORK%20IN%20PROGRESS-%20rgb(255%2C%20172%2C%2028)%20?style=for-the-badge
