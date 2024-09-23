@@ -13,12 +13,13 @@ content using a context map.
 
 ## Features
 
-- Variable interpolation with HTML escaping
-- Sections and inverted sections support
-- Raw variable output (unescaped)
-- Nested context lookup with dot notation
-- Iteration over arrays and maps
-- Lightweight and fast
+- Simple to use, lightweight and fast;
+- Variable interpolation &mdash; with HTML escaping by default;
+- Conditional sections &mdash; normal and inverted;
+- Nested context with dot notation;
+- Iteration over arrays;
+- Context from JSON string;
+- Options to control error handling.
 
 ## Installation
 
@@ -33,8 +34,45 @@ obj := '{ "greet": "Hello", "name": "John", "admin": true }'
 
 ctx := from_json(code)!
 res := render(template, ctx)!
-println(res)
+println(res) // 'Hello, John. You are admin.'
 ```
+
+### Interpolation
+
+`{{variable}}`
+
+Returns the string value of `variable`, espacing HTML
+
+`{{&raw_variable}}`
+
+Returns the string value of `raw_variable`, without escaping
+
+### Section
+
+`{{#variable}} <content> {{/variable}}`
+
+Repeats the content 0, 1, or n times. 
+- 0 if falsy value &mdash; false, empty string, empty array, empty map;
+- 1 if truthy value &mdash; true, non-empty string, non-empty map;
+- n for n-sized array
+
+### Inverted section
+
+`{{^variable}} <content> {{/variable}}`
+
+Repeats the content 0 or 1 times. 
+- 0 if truthy value;
+- 1 if falsy value;
+
+### Nested context
+
+`{{person.age}}`
+
+Map fields can be used with dot notation.
+
+`{{#persons}} {{$.age}} {{/persons}}`
+
+Inside sections, the current item is stored in context as `$`
 
 ## License
 
