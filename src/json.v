@@ -2,7 +2,6 @@ module wustache
 
 import x.json2 { Any, raw_decode }
 
-
 pub fn from_json(json string) !Context {
 	return from_json_with(json, Opts{})!
 }
@@ -14,8 +13,8 @@ fn from_json_with(json string, opts Opts) !Context {
 		return error('Invalid JSON')
 	}
 
-	mut val := decode(root)!
-
+	mut val := decode(root)
+	
 	return if mut val is map[string]Value {
 		val
 	} else {
@@ -40,7 +39,7 @@ fn validate(node Any) bool {
 	}
 }
 
-fn decode(node Any) !Value {
+fn decode(node Any) Value {
 	return match node {
 		bool, string {
 			Value(node)
@@ -48,14 +47,14 @@ fn decode(node Any) !Value {
 		[]Any {
 			mut child := []Value{cap: node.len}
 			for it in node {
-				child << decode(it)!
+				child << decode(it)
 			}
 			child
 		}
 		map[string]Any {
 			mut child := map[string]Value{}
 			for key, val in node {
-				child[key] = decode(val)!
+				child[key] = decode(val)
 			}
 			child
 		}
