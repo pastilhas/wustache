@@ -9,7 +9,10 @@
 
 Wustache is a lightweight and efficient Mustache-like templating engine
 implemented in V. It provides a simple way to render templates with dynamic
-content using a context map.
+content using a context map. It focuses on simplicity &mdash; load the `template`
+as a string and a `map of data` as JSON string, and execute a single instruction `render`.
+By default, only missing end tags and variables raise errors, but you can make
+it more, or less, picky.
 
 ## Features
 
