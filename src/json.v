@@ -2,7 +2,7 @@ module wustache
 
 import x.json2 { Any, raw_decode }
 
-pub fn from_json(json string) !Context {
+fn from_json(json string) !Context {
 	return from_json_with(json, Opts{})!
 }
 
@@ -14,7 +14,7 @@ fn from_json_with(json string, opts Opts) !Context {
 	}
 
 	mut val := decode(root)
-	
+
 	return if mut val is map[string]Value {
 		val
 	} else {

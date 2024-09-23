@@ -1,6 +1,4 @@
-module main
-
-import wustache { from_json }
+module wustache
 
 fn test_decode_non_map() {
 	code := '"This is not a map"'

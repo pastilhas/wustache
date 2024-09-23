@@ -7,9 +7,9 @@ const neg_section = `^`
 const raw_var = `&`
 const iter_var = '$'
 
-pub type Value = string | bool | []Value | map[string]Value
+type Value = string | bool | []Value | map[string]Value
 
-pub type Context = map[string]Value
+type Context = map[string]Value
 
 pub struct Opts {
 	allow_empty_tag bool = true
