@@ -32,8 +32,7 @@ Install the [V programming language](https://vlang.io/). Then, run:
 template := '{{greet}}, {{name}}. {{#admin}}You are admin.{{/admin}}'
 obj := '{ "greet": "Hello", "name": "John", "admin": true }'
 
-ctx := from_json(code)!
-res := render(template, ctx)!
+res := render(template, obj)!
 println(res) // 'Hello, John. You are admin.'
 ```
 
