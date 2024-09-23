@@ -20,12 +20,34 @@ pub struct Opts {
 
 pub fn from_json(json string, opts Opts) !Context {
 	root := raw_decode(json)!
+
+	if !(opts.ignore_errors || validate(root)) {
+		return error('Invalid JSON')
+	}
+
 	mut val := decode(root)!
 
 	return if mut val is map[string]Value {
 		val
 	} else {
 		error('Not a map object')
+	}
+}
+
+fn validate(node Any) bool {
+	return match node {
+		bool, string {
+			true
+		}
+		[]Any {
+			node.all(validate)
+		}
+		map[string]Any {
+			node.values().all(validate)
+		}
+		else {
+			false
+		}
 	}
 }
 
@@ -86,7 +108,7 @@ fn render_section(template string, ctx Context) !string {
 		}
 
 		if tag.len == 0 {
-			println('Missing tag at ${pointer}')
+			// println('Missing tag at ${pointer}')
 			continue
 		}
 

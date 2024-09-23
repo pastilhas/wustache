@@ -22,6 +22,23 @@ fn test_decode_non_map2() {
 	assert false
 }
 
+fn test_decode_invalid_map() {
+	code := '{
+		"a": "b",
+		"b": 1337,
+		"c": "d",
+		"d": 42,
+		"e": true
+	}'
+	from_json(code, Opts{}) or {
+		assert err.str() == 'Invalid JSON'
+
+		return
+	}
+
+	assert false
+}
+
 fn test_decode_map() {
 	code := '{
 		"a": "b",
