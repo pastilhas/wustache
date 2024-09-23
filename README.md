@@ -1,15 +1,19 @@
 <div align="center">
-  
-[![](wustache.png)]()
-  
-### Wustache
 
 [![](https://img.shields.io/badge/Vlang-gray?style=for-the-badge&logo=v)](https://vlang.io/)
 [![](https://img.shields.io/badge/WORK%20IN%20PROGRESS-%20rgb(255%2C%20172%2C%2028)%20?style=for-the-badge)](#)
+[![](https://img.shields.io/github/forks/Pastilhas/wustache.svg?style=for-the-badge)](#)
+[![](https://img.shields.io/github/stars/Pastilhas/wustache.svg?style=for-the-badge)](#)
+[![](https://img.shields.io/github/license/Pastilhas/wustache.svg?style=for-the-badge)](#)
+  
+[![](wustache.png)]()
+  
+### wustache
+
 
 </div>
 
-Wustache is a lightweight and efficient Mustache-like templating engine
+**wustache** is a lightweight and efficient Mustache-like templating engine
 implemented in V. It provides a simple way to render templates with dynamic
 content using a context map. It focuses on simplicity &mdash; load the `template`
 as a string and a `map of data` as JSON string, and execute a single instruction `render`.
@@ -88,4 +92,4 @@ Repeats `content` {0, 1} times
 
 ## License
 
-Wustache is released under the MIT License. See the LICENSE file for details.
+**wustache** is released under the MIT License. See the LICENSE file for details.
