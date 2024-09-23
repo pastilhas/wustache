@@ -1,7 +1,6 @@
 module wustache
 
 import encoding.html
-import x.json2 { Any, raw_decode }
 
 const pos_section = `#`
 const neg_section = `^`
@@ -18,73 +17,12 @@ pub struct Opts {
 	print_logs      bool = true
 }
 
-pub fn from_json(json string) !Context {
-	return from_json_with(json, Opts{})!
+pub fn render(template string, context string) !string {
+	return render_with(template, context, Opts{})!
 }
 
-pub fn from_json_with(json string, opts Opts) !Context {
-	root := raw_decode(json)!
-
-	if !(opts.ignore_errors || validate(root)) {
-		return error('Invalid JSON')
-	}
-
-	mut val := decode(root)!
-
-	return if mut val is map[string]Value {
-		val
-	} else {
-		error('Not a map object')
-	}
-}
-
-fn validate(node Any) bool {
-	return match node {
-		bool, string {
-			true
-		}
-		[]Any {
-			node.all(validate)
-		}
-		map[string]Any {
-			node.values().all(validate)
-		}
-		else {
-			false
-		}
-	}
-}
-
-fn decode(node Any) !Value {
-	return match node {
-		bool, string {
-			Value(node)
-		}
-		[]Any {
-			mut child := []Value{cap: node.len}
-			for it in node {
-				child << decode(it)!
-			}
-			child
-		}
-		map[string]Any {
-			mut child := map[string]Value{}
-			for key, val in node {
-				child[key] = decode(val)!
-			}
-			child
-		}
-		else {
-			node.str()
-		}
-	}
-}
-
-pub fn render(template string, ctx Context) !string {
-	return render_with(template, ctx, Opts{})!
-}
-
-pub fn render_with(template string, ctx Context, opts Opts) !string {
+pub fn render_with(template string, context string, opts Opts) !string {
+	ctx := from_json_with(context, opts)!
 	return render_section(template, ctx, opts)!
 }
 
