@@ -39,40 +39,48 @@ println(res) // 'Hello, John. You are admin.'
 
 ### Interpolation
 
-`{{variable}}`
+```mustache
+Hello, {{name}}.
 
-Returns the string value of `variable`, espacing HTML
+Welcome, {{user.name}}. You have {{user.unread}} messages.
 
-`{{&raw_variable}}`
+<div class="user-card">
+  {{&raw_variable}}
+</div>
+```
 
-Returns the string value of `raw_variable`, without escaping
+### Sections
 
-### Section
+#### Normal
+```mustache
+{{#never_true}} This will never be seen! {{/never_true}}
 
-`{{#variable}} <content> {{/variable}}`
+{{#is_logged}} Welcome back! {{/is_logged}}
 
-Repeats the content 0, 1, or n times. 
+{{#items}}
+  {{$.name}}: {{$.price}}
+{{/items}}
+```
+
+Repeats `content` {0, 1, n} times
 - 0 if falsy value &mdash; false, empty string, empty array, empty map;
 - 1 if truthy value &mdash; true, non-empty string, non-empty map;
-- n for n-sized array
+- n for n-sized array &mdash; each iteration, the value is mapped to `$`
 
-### Inverted section
+#### Inverted
 
-`{{^variable}} <content> {{/variable}}`
+```mustache
+{{^is_logged}}
+  {{&login_form}}
+{{/is_logged}}
+{{#is_logged}}
+  Hello, {{user.name}}!
+{{/is_logged}}
+```
 
-Repeats the content 0 or 1 times. 
+Repeats `content` {0, 1} times
 - 0 if truthy value;
 - 1 if falsy value;
-
-### Nested context
-
-`{{person.age}}`
-
-Map fields can be used with dot notation.
-
-`{{#persons}} {{$.age}} {{/persons}}`
-
-Inside sections, the current item is stored in context as `$`
 
 ## License
 
