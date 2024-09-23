@@ -1,6 +1,8 @@
 # Wustache
 
-Wustache is a lightweight and efficient Mustache-like templating engine implemented in V. It provides a simple way to render templates with dynamic content using a context map.
+Wustache is a lightweight and efficient Mustache-like templating engine
+implemented in V. It provides a simple way to render templates with dynamic
+content using a context map.
 
 ## Features
 
@@ -10,6 +12,22 @@ Wustache is a lightweight and efficient Mustache-like templating engine implemen
 - Nested context lookup with dot notation
 - Iteration over arrays and maps
 - Lightweight and fast
+
+## Installation
+
+Install the [V programming language](https://vlang.io/). Then, run:
+```v install Pastilhas.wustache``` 
+
+## Usage
+
+```v
+template := '{{greet}}, {{name}}. {{#admin}}You are admin.{{/admin}}'
+obj := '{ "greet": "Hello", "name": "John", "admin": true }'
+
+ctx := from_json(code, Opts{})!
+res := render(template, ctx)!
+println(res)
+```
 
 ## License
 
