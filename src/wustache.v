@@ -112,11 +112,18 @@ fn render_section(template string, ctx Context, opts Opts) !string {
 			temp = temp[(j + etag.len)..]
 			pointer += j + stag.len
 		} else {
-			return error('Missing end delimiter at ${pointer}')
+			if !opts.ignore_errors {
+				return error('Missing end delimiter at ${pointer}')
+			}
+
+			continue
 		}
 
 		if tag.len == 0 {
-			// println('Missing tag at ${pointer}')
+			if !opts.allow_empty_tag {
+				return error('Empty tag at ${pointer}')
+			}
+
 			continue
 		}
 
@@ -130,7 +137,11 @@ fn render_section(template string, ctx Context, opts Opts) !string {
 					temp = temp[(i + end.len)..]
 					pointer += i + end.len
 				} else {
-					return error('Missing end tag for ${section} at ${pointer}')
+					if !opts.ignore_errors {
+						return error('Missing end tag for ${section} at ${pointer}')
+					}
+
+					continue
 				}
 
 				if val := lookup(section, ctx) {
@@ -164,6 +175,12 @@ fn render_section(template string, ctx Context, opts Opts) !string {
 							}
 						}
 					}
+				} else {
+					if !opts.ignore_errors {
+						return error('Missing value ${tag[1..]}')
+					}
+
+					continue
 				}
 			}
 			neg_section {
@@ -175,7 +192,11 @@ fn render_section(template string, ctx Context, opts Opts) !string {
 					temp = temp[(i + end.len)..]
 					pointer += i + end.len
 				} else {
-					return error('Missing end tag for ${section} at ${pointer}')
+					if !opts.ignore_errors {
+						return error('Missing end tag for ${section} at ${pointer}')
+					}
+
+					continue
 				}
 
 				if val := lookup(section, ctx) {
@@ -210,11 +231,23 @@ fn render_section(template string, ctx Context, opts Opts) !string {
 			raw_var {
 				if val := lookup(tag[1..], ctx) {
 					result += val2str(val)
+				} else {
+					if !opts.ignore_errors {
+						return error('Missing value ${tag[1..]}')
+					}
+
+					continue
 				}
 			}
 			else {
 				if val := lookup(tag, ctx) {
 					result += html.escape(val2str(val))
+				} else {
+					if !opts.ignore_errors {
+						return error('Missing value ${tag[1..]}')
+					}
+
+					continue
 				}
 			}
 		}
