@@ -1,19 +1,11 @@
 <div align="center">
-<a href="#"><img src="wustache.png" alt="drawing" width="100"/></a>
+  
+[![](wustache.png)]()
+  
+### Wustache
 
-<h1>WUSTACHE</h1>
-
-<a href="https://vlang.io/">
-
-![](https://img.shields.io/badge/Vlang-gray?style=for-the-badge&logo=v)
-
-</a>
-
-<a href="#">
-
-![](https://img.shields.io/badge/WORK%20IN%20PROGRESS-%20rgb(255%2C%20172%2C%2028)%20?style=for-the-badge)
-
-</a>
+[![](https://img.shields.io/badge/Vlang-gray?style=for-the-badge&logo=v)](https://vlang.io/)
+[![](https://img.shields.io/badge/WORK%20IN%20PROGRESS-%20rgb(255%2C%20172%2C%2028)%20?style=for-the-badge)](#)
 
 </div>
 
