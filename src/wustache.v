@@ -13,12 +13,12 @@ pub type Value = string | bool | []Value | map[string]Value
 pub type Context = map[string]Value
 
 pub struct Opts {
-	allow_empty   bool = true
-	ignore_errors bool = false
-	print_logs    bool = false
+	allow_empty_tag bool = true
+	ignore_errors   bool = false
+	print_logs      bool = true
 }
 
-pub fn from_json(json string) !Context {
+pub fn from_json(json string, opts Opts) !Context {
 	root := raw_decode(json)!
 	mut val := decode(root)!
 
