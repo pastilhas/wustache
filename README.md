@@ -1,5 +1,5 @@
 <div align="center">
-<img src="wustache.png" alt="drawing" width="100"/>
+<a href="#"><img src="wustache.png" alt="drawing" width="100"/></a>
 
 <h1>WUSTACHE</h1>
 
