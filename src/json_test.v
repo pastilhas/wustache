@@ -23,13 +23,20 @@ fn test_decode_non_map2() {
 }
 
 fn test_decode_map() {
-	code := '{"a": "b", "c": "d", "b": 1337, "d": 42, "e": true}'
+	code := '{
+		"a":"b",
+		"b":1337,
+		"c":"d",
+		"d":42,
+		"e":true
+	}'
 	if res := from_json(code) {
-		assert res['a'] is string
-		assert res['b'] is string
-		assert res['c'] is string
-		assert res['d'] is string
-		assert res['e'] is bool
+		assert res['a'] is string && res['a'] == 'b'
+		assert res['b'] is string && res['b'] == '1337'
+		assert res['c'] is string && res['c'] == 'd'
+		assert res['d'] is string && res['d'] == '42'
+		assert res['e'] is bool && res['e'] == true
+
 		return
 	}
 
