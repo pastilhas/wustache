@@ -24,7 +24,7 @@ content using a context map.
 ## Installation
 
 Install the [V programming language](https://vlang.io/). Then, run:
-```v install Pastilhas.wustache``` 
+`v install Pastilhas.wustache`
 
 ## Usage
 
