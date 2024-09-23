@@ -106,9 +106,7 @@ fn render_section(template string, ctx Context, opts Opts) !string {
 						}
 						map[string]Value {
 							if val.keys().len > 0 {
-								mut new_ctx := ctx.clone()
-								new_ctx[iter_var] = val
-								sec := render_section(content, new_ctx, opts)!
+								sec := render_section(content, ctx, opts)!
 								result += sec
 							}
 						}
