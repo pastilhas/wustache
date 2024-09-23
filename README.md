@@ -4,7 +4,7 @@
 <h1>WUSTACHE</h1>
 
 [![Built][BuiltBadge]][BuiltUrl]
-![WIP][WIPBadge]
+[![WIP][WIPBadge]]()
 </div>
 
 Wustache is a lightweight and efficient Mustache-like templating engine
