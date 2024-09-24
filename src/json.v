@@ -23,7 +23,7 @@ pub fn from_json(str string) !map[string]Any {
 
 	return if mut res is map[string]Any {
 		res
-	} else{
+	} else {
 		error('Not a map')
 	}
 }
@@ -34,7 +34,7 @@ fn convert(obj json2.Any) !Any {
 			Any(obj)
 		}
 		[]json2.Any {
-			mut a := []Any{cap:obj.len}
+			mut a := []Any{cap: obj.len}
 			for it in obj {
 				a << convert(it)!
 			}
