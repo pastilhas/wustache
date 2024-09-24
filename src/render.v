@@ -18,27 +18,28 @@ mut:
 	template string
 	context  map[string]Any
 	opts     Opts
+	pointer  int = 0
 }
 
 pub fn render(template string, context string) !string {
 	m := from_json(context)!
-	mut t := Template{template, m, Opts{}}
+	mut t := Template{template, m, Opts{}, 0}
 	return t.render_section()!
 }
 
 pub fn render_with(template string, context string, opts Opts) !string {
 	m := from_json(context)!
-	mut t := Template{template, m, opts}
+	mut t := Template{template, m, opts, 0}
 	return t.render_section()!
 }
 
 pub fn render_map(template string, context map[string]Any) !string {
-	mut t := Template{template, context, Opts{}}
+	mut t := Template{template, context, Opts{}, 0}
 	return t.render_section()!
 }
 
 pub fn render_map_with(template string, context map[string]Any, opts Opts) !string {
-	mut t := Template{template, context, opts}
+	mut t := Template{template, context, opts, 0}
 	return t.render_section()!
 }
 
@@ -46,37 +47,34 @@ fn (mut t Template) render_section() !string {
 	mut result := ''
 	mut stag := '{{'
 	mut etag := '}}'
-	mut pointer := 0
 	mut tag := ''
 
 	for {
-		if i := t.template.index(stag) {
-			result += t.template[..i]
-			t.template = t.template[(i + stag.len)..]
-			pointer += i + stag.len
-		} else {
+		i := t.template.index(stag) or {
 			result += t.template
 			break
 		}
 
-		if j := t.template.index(etag) {
-			tag = t.template[..j]
-			t.template = t.template[(j + etag.len)..]
-			pointer += j + stag.len
-		} else {
-			if !t.opts.ignore_errors {
-				return error('Missing end delimiter at ${pointer}')
-			}
+		result += t.template[..i]
+		t.template = t.template[(i + stag.len)..]
+		t.pointer += i + stag.len
 
-			continue
+		j := t.template.index(etag) or {
+			if t.opts.ignore_errors {
+				continue
+			}
+			return error('Missing end delimiter at ${t.pointer}')
 		}
 
-		if tag.len == 0 {
-			if !t.opts.allow_empty_tag {
-				return error('Empty tag at ${pointer}')
-			}
+		tag = t.template[..j]
+		t.template = t.template[(j + etag.len)..]
+		t.pointer += j + stag.len
 
-			continue
+		if tag.len == 0 {
+			if t.opts.allow_empty_tag {
+				continue
+			}
+			return error('Empty tag at ${t.pointer}')
 		}
 
 		// TODO: Add comments
@@ -84,67 +82,24 @@ fn (mut t Template) render_section() !string {
 		// TODO: Add set delimiter
 		match tag[0] {
 			pos_section {
-				section := tag[1..]
-				end := '${stag}/${section}${etag}'
-				mut content := ''
-				if i := t.template.index(end) {
-					content = t.template[..i]
-					t.template = t.template[(i + end.len)..]
-					pointer += i + end.len
-				} else {
-					if !t.opts.ignore_errors {
-						return error('Missing end tag for ${section} at ${pointer}')
+				key := tag[1..]
+				end := '${stag}/${key}${etag}'
+				result += t.render_pos_section(key, end) or {
+					if t.opts.ignore_errors {
+						continue
 					}
-
-					continue
+					return err
 				}
-
-				old_template := t.template.clone()
-				t.template = content
-				mut val := t.lookup(section)!
-				if mut val is []Any {
-					// TODO: Optimize re-rendering of static data
-					// TODO: Minimize cloning maps
-					for it in val {
-						old_context := t.context.clone()
-						t.context[iter_var] = it
-						sec := t.render_section()!
-						t.context = old_context.clone()
-						t.template = content
-						result += sec
-					}
-				} else {
-					if val.bool() {
-						sec := t.render_section()!
-						result += sec
-					}
-				}
-				t.template = old_template
 			}
 			neg_section {
-				section := tag[1..]
-				end := '${stag}/${section}${etag}'
-				mut content := ''
-				if i := t.template.index(end) {
-					content = t.template[..i]
-					t.template = t.template[(i + end.len)..]
-					pointer += i + end.len
-				} else {
-					if !t.opts.ignore_errors {
-						return error('Missing end tag for ${section} at ${pointer}')
+				key := tag[1..]
+				end := '${stag}/${key}${etag}'
+				result += t.render_neg_section(key, end) or {
+					if t.opts.ignore_errors {
+						continue
 					}
-
-					continue
+					return err
 				}
-
-				old_template := t.template.clone()
-				t.template = content
-				val := t.lookup(section)!
-				if !val.bool() {
-					sec := t.render_section()!
-					result += sec
-				}
-				t.template = old_template
 			}
 			raw_var {
 				val := t.lookup(tag[1..])!
@@ -157,6 +112,64 @@ fn (mut t Template) render_section() !string {
 		}
 	}
 
+	return result
+}
+
+fn (mut t Template) render_pos_section(key string, end string) !string {
+	mut content := ''
+	mut result := ''
+
+	i := t.template.index(end) or { return error('Missing end tag for ${key} at ${t.pointer}') }
+
+	content = t.template[..i]
+	t.template = t.template[(i + end.len)..]
+	t.pointer += i + end.len
+
+	old_template := t.template.clone()
+	t.template = content
+
+	mut val := t.lookup(key)!
+
+	if mut val is []Any {
+		// TODO: Optimize re-rendering of static data
+		// TODO: Minimize cloning maps
+		for it in val {
+			old_context := t.context.clone()
+			t.context[iter_var] = it
+			result += t.render_section()!
+			t.context = old_context.clone()
+			t.template = content
+		}
+	} else {
+		if val.bool() {
+			result = t.render_section()!
+		}
+	}
+
+	t.template = old_template
+	return result
+}
+
+fn (mut t Template) render_neg_section(key string, end string) !string {
+	mut content := ''
+	mut result := ''
+
+	i := t.template.index(end) or { return error('Missing end tag for ${key} at ${t.pointer}') }
+
+	content = t.template[..i]
+	t.template = t.template[(i + end.len)..]
+	t.pointer += i + end.len
+
+	old_template := t.template.clone()
+	t.template = content
+
+	val := t.lookup(key)!
+
+	if !val.bool() {
+		result = t.render_section()!
+	}
+
+	t.template = old_template
 	return result
 }
 
