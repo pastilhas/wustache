@@ -12,22 +12,15 @@
 
 </div>
 
-**wustache** is a lightweight and efficient Mustache-like templating engine
-implemented in V. It provides a simple way to render templates with dynamic
-content using a context map. It focuses on simplicity &mdash; load the `template`
-as a string and a `map of data` as JSON string, and execute a single instruction `render`.
-By default, only missing end tags and variables raise errors, but you can make
-it more, or less, picky.
+is a lightweight and efficient Mustache-like templating engine implemented in V. It provides a simple way to render templates with dynamic content using a context map. It focuses on simplicity &mdash; load the `template` and the `context` as JSON string, and execute a single instruction `render`. it is safe by default, but you can make it more, or less, picky.
 
 ## Features
 
-- Simple to use, lightweight and fast;
-- Variable interpolation &mdash; with HTML escaping by default;
+- Simple to use API, lightweight and fast;
+- Variables &mdash; with HTML escaping by default;
 - Conditional sections &mdash; normal and inverted;
-- Nested context with dot notation;
-- Iteration over arrays;
-- Context from JSON string;
-- Options to control error handling.
+- Nested context and iteration over arrays;
+- Error handling.
 
 ## Installation
 
