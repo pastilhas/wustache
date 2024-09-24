@@ -24,8 +24,7 @@ is a lightweight and efficient templating engine written in V. It provides a fas
 
 ## Installation
 
-Install the [V programming language](https://vlang.io/). Then, run:
-`v install Pastilhas.wustache`
+Install the [V language](https://vlang.io/) and run `v install Pastilhas.wustache`
 
 ## Usage
 
