@@ -134,36 +134,26 @@ fn (mut t Template) render_sub_section(key string, end string, positive bool) !s
 	t.template = t.template[(i + end.len)..]
 	t.pointer += i + end.len
 
-	old_template := t.template.clone()
-	t.template = content
-
-	mut val := t.lookup(key)!
+	mut it_t := new_template(content, t.context.clone(), t.opts)
+	mut val := it_t.lookup(key)!
 
 	if positive {
 		if mut val is []Any {
 			// TODO: Optimize re-rendering of static data
-			// TODO: Minimize cloning maps
 			for it in val {
-				old_context := t.context.clone()
-				t.context[iter_var] = it
+				it_t.context[iter_var] = it
 
-				result += t.render_section()!
+				result += it_t.render_section()!
 
-				t.context = old_context.clone()
-				t.template = content
+				it_t.template = content
 			}
-		} else {
-			if val.bool() {
-				result = t.render_section()!
-			}
+		} else if val.bool() {
+			result = it_t.render_section()!
 		}
-	} else {
-		if !val.bool() {
-			result = t.render_section()!
-		}
+	} else if !val.bool() {
+		result = it_t.render_section()!
 	}
 
-	t.template = old_template
 	return result
 }
 
