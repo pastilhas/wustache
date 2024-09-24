@@ -10,7 +10,6 @@
   
 ### wustache
 
-
 </div>
 
 **wustache** is a lightweight and efficient Mustache-like templating engine
@@ -89,6 +88,27 @@ Repeats `content` {0, 1, n} times
 Repeats `content` {0, 1} times
 - 0 if truthy value;
 - 1 if falsy value;
+
+## Mustache compatibility
+
+### Planned
+
+- [X] Variables
+- [X] Dotted names
+- [X] Implicit (with modifications)
+- [X] Sections 
+- [X] Inverted sections
+- [ ] Partials
+- [ ] Set delimiter
+
+### Not planned
+
+- [ ] Lambdas
+- [ ] Comments
+- [ ] Dynamic partials
+- [ ] Blocks
+- [ ] Parents
+- [ ] Dynamic parents
 
 ## License
 
