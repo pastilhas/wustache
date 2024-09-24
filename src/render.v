@@ -9,7 +9,7 @@ const iter_var = '$'
 
 pub struct Opts {
 	allow_empty_tag bool = true
-	ignore_errors   bool = false
+	ignore_errors   bool
 	print_logs      bool = true
 }
 
@@ -18,28 +18,37 @@ mut:
 	template string
 	context  map[string]Any
 	opts     Opts
-	pointer  int = 0
+	pointer  int
+}
+
+fn new_template(t string, c map[string]Any, o Opts) Template {
+	return Template{
+		template: t
+		context:  c
+		opts:     o
+		pointer:  0
+	}
 }
 
 pub fn render(template string, context string) !string {
 	m := from_json(context)!
-	mut t := Template{template, m, Opts{}, 0}
+	mut t := new_template(template, m, Opts{})
 	return t.render_section()!
 }
 
 pub fn render_with(template string, context string, opts Opts) !string {
 	m := from_json(context)!
-	mut t := Template{template, m, opts, 0}
+	mut t := new_template(template, m, Opts{})
 	return t.render_section()!
 }
 
 pub fn render_map(template string, context map[string]Any) !string {
-	mut t := Template{template, context, Opts{}, 0}
+	mut t := new_template(template, context, Opts{})
 	return t.render_section()!
 }
 
 pub fn render_map_with(template string, context map[string]Any, opts Opts) !string {
-	mut t := Template{template, context, opts, 0}
+	mut t := new_template(template, context, opts)
 	return t.render_section()!
 }
 
@@ -136,7 +145,9 @@ fn (mut t Template) render_pos_section(key string, end string) !string {
 		for it in val {
 			old_context := t.context.clone()
 			t.context[iter_var] = it
+
 			result += t.render_section()!
+
 			t.context = old_context.clone()
 			t.template = content
 		}
