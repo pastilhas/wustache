@@ -38,7 +38,7 @@ pub fn render(template string, context string) !string {
 
 pub fn render_with(template string, context string, opts Opts) !string {
 	m := from_json(context)!
-	mut t := new_template(template, m, Opts{})
+	mut t := new_template(template, m, opts)
 	return t.render_section()!
 }
 
