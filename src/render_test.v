@@ -1,13 +1,7 @@
 module wustache
 
 fn test_primitives() {
-	context := {
-		'a': Any(1337)
-		'b': 'hello'
-		'c': 42.01
-		'd': true
-	}
-
+	context := '{ "a": 1337, "b": "hello", "c": 42.01, "d": true }'
 	template := '{{a}} {{b}} {{c}} {{d}}'
 
 	res := render(template, context)!
@@ -15,29 +9,17 @@ fn test_primitives() {
 }
 
 fn test_array() {
-	mut context := map[string]Any{}
-	context['a'] = [Any(1337), 42, 50]
-	context['b'] = [Any('1'), '2', '3']
-
-	template := '{{#a}}{{$}}{{/a}}'
+	context := '{ "a": [1337, 42, 50] }'
+	template := '{{#a}}{{$}} {{/a}}'
 
 	res := render(template, context)!
-	assert res == '13374250'
+	assert res == '1337 42 50 '
 }
 
 fn test_map() {
-	mut context := map[string]Any{}
-	context['a'] = 'b'
-	context['b'] = {
-		'c': Any(1337)
-		'd': 53.562
-	}
-	context['c'] = 'c'
-	context['d'] = 42.0
-	context['e'] = true
-
+	context := '{ "b": { "c": 1337, "d": 53.50 } }'
 	template := '{{#b}} {{b.c}} {{b.d}} {{/b}}'
 
 	res := render(template, context)!
-	assert res == ' 1337 53.562 '
+	assert res == ' 1337 53.5 '
 }

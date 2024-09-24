@@ -13,11 +13,21 @@ pub struct Opts {
 	print_logs      bool = true
 }
 
-pub fn render(template string, context map[string]Any) !string {
-	return render_with(template, context, Opts{})!
+pub fn render(template string, context string) !string {
+	m := from_json(context)!
+	return render_map_with(template, m, Opts{})!
 }
 
-pub fn render_with(template string, context map[string]Any, opts Opts) !string {
+pub fn render_with(template string, context string, opts Opts) !string {
+	m := from_json(context)!
+	return render_map_with(template, m, opts)!
+}
+
+pub fn render_map(template string, context map[string]Any) !string {
+	return render_map_with(template, context, Opts{})!
+}
+
+pub fn render_map_with(template string, context map[string]Any, opts Opts) !string {
 	return render_section(template, context, opts)!
 }
 
