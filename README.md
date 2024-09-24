@@ -61,7 +61,7 @@ Welcome, {{user.name}}. You have {{user.unread}} messages.
 ```
 
 Repeats `content` {0, 1, n} times
-- 0, if falsy value &mdash; false, empty string, empty array, empty map;
+- 0, if falsy value &mdash; false, empty string, 'false', '0', '0.0', empty array, empty map;
 - 1, if truthy value &mdash; true, non-empty string, non-empty map;
 - n, for n-sized array &mdash; each iteration, the value is mapped to `$`
 
@@ -84,7 +84,7 @@ Repeats `content` {0, 1} times &mdash; 0, if truthy, else 1;
 
 - [X] Variables
 - [X] Dotted names
-- [X] Implicit (with modifications)
+- [X] Implicit iterator (with modifications)
 - [X] Sections 
 - [X] Inverted sections
 - [ ] Partials
