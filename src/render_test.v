@@ -25,18 +25,19 @@ fn test_array() {
 	assert res == '13374250'
 }
 
-fn test_with_map() {
+fn test_map() {
 	mut context := map[string]Any{}
 	context['a'] = 'b'
 	context['b'] = {
 		'c': Any(1337)
+		'd': 53.562
 	}
 	context['c'] = 'c'
 	context['d'] = 42.0
 	context['e'] = true
 
-	template := '{{#b}} {{b.c}} {{/b}}'
+	template := '{{#b}} {{b.c}} {{b.d}} {{/b}}'
 
 	res := render(template, context)!
-	assert res == ' 1337 '
+	assert res == ' 1337 53.562 '
 }
