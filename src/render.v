@@ -169,23 +169,30 @@ fn (mut t Template) render_sub_section(key string, end string, positive bool) !s
 
 fn (t Template) lookup(key string) !Any {
 	parts := key.split('.')
-	mut current := t.context.clone()
+	mut current := unsafe { &t.context }
 
-	for part in parts {
-		if mut val := current[part] {
-			if mut val is map[string]Any {
-				current = val.clone()
-			} else {
-				return val
-			}
-		} else {
-			return if t.opts.ignore_errors {
-				Any('')
-			} else {
-				error('Missing value ${key}')
+	for i, part in parts {
+		mut val := unsafe {
+			current[part] or {
+				return if t.opts.ignore_errors {
+					Any('')
+				} else {
+					error('Missing value ${key}')
+				}
 			}
 		}
+
+		if i == parts.len - 1 {
+			return val
+		}
+
+		if mut val is map[string]Any {
+			current = &val
+			continue
+		}
+
+		return error('Missing value ${key}')
 	}
 
-	return Any(current)
+	return Any(*current)
 }
