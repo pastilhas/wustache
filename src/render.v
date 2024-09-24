@@ -173,13 +173,7 @@ fn (t Template) lookup(key string) !Any {
 
 	for i, part in parts {
 		mut val := unsafe {
-			current[part] or {
-				return if t.opts.ignore_errors {
-					Any('')
-				} else {
-					error('Missing value ${key}')
-				}
-			}
+			current[part] or { break }
 		}
 
 		if i == parts.len - 1 {
@@ -191,8 +185,12 @@ fn (t Template) lookup(key string) !Any {
 			continue
 		}
 
-		return error('Missing value ${key}')
+		break
 	}
 
-	return Any(*current)
+	return if t.opts.ignore_errors {
+		Any('')
+	} else {
+		error('Missing value ${key}')
+	}
 }
