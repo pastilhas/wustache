@@ -1,59 +1,42 @@
 module wustache
 
-fn test_decode_non_map() {
-	code := '"This is not a map"'
-	from_json(code) or {
-		assert err.str() == 'Not a map object'
-		return
+fn test_primitives() {
+	context := {
+		'a': Any(1337)
+		'b': 'hello'
+		'c': 42.01
+		'd': true
 	}
 
-	assert false
+	template := '{{a}} {{b}} {{c}} {{d}}'
+
+	res := render(template, context)!
+	assert res == '1337 hello 42.01 true'
 }
 
-fn test_decode_non_map2() {
-	code := '["A", "B", "C"]'
-	from_json(code) or {
-		assert err.str() == 'Not a map object'
-		return
-	}
+fn test_array() {
+	mut context := map[string]Any{}
+	context['a'] = [Any(1337), 42, 50]
+	context['b'] = [Any('1'), '2', '3']
 
-	assert false
+	template := '{{#a}}{{$}}{{/a}}'
+
+	res := render(template, context)!
+	assert res == '13374250'
 }
 
-fn test_decode_invalid_map() {
-	code := '{
-		"a": "b",
-		"b": 1337,
-		"c": "d",
-		"d": 42,
-		"e": true
-	}'
-	from_json(code) or {
-		assert err.str() == 'Invalid JSON'
-
-		return
+fn test_with_map() {
+	mut context := map[string]Any{}
+	context['a'] = 'b'
+	context['b'] = {
+		'c': Any(1337)
 	}
+	context['c'] = 'c'
+	context['d'] = 42.0
+	context['e'] = true
 
-	assert false
-}
+	template := '{{#b}} {{b.c}} {{/b}}'
 
-fn test_decode_map() {
-	code := '{
-		"a": "b",
-		"b": "1337",
-		"c": "d",
-		"d": "42",
-		"e": true
-	}'
-	if res := from_json(code) {
-		assert res['a'] is string && res['a'] == 'b'
-		assert res['b'] is string && res['b'] == '1337'
-		assert res['c'] is string && res['c'] == 'd'
-		assert res['d'] is string && res['d'] == '42'
-		assert res['e'] is bool && res['e'] == true
-
-		return
-	}
-
-	assert false
+	res := render(template, context)!
+	assert res == ' 1337 '
 }

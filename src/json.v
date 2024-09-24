@@ -1,65 +1,72 @@
 module wustache
 
-import x.json2 { Any, raw_decode }
+pub type Any = string
+	| map[string]Any
+	| []Any
+	| bool
+	| f64
+	| f32
+	| i64
+	| int
+	| i16
+	| i8
+	| u64
+	| u32
+	| u16
+	| u8
 
-fn from_json(json string) !Context {
-	return from_json_with(json, Opts{})!
-}
-
-fn from_json_with(json string, opts Opts) !Context {
-	root := raw_decode(json)!
-
-	if !(opts.ignore_errors || validate(root)) {
-		return error('Invalid JSON')
-	}
-
-	mut val := decode(root)
-
-	return if mut val is map[string]Value {
-		val
-	} else {
-		error('Not a map object')
-	}
-}
-
-fn validate(node Any) bool {
-	return match node {
-		bool, string {
-			true
+pub fn (f Any) bool() bool {
+	return match f {
+		bool {
+			f
+		}
+		string {
+			f == 'true' || (f != 'false' && f != '0' && f != '0.0' && f.len > 0)
+		}
+		i8, i16, int, i64 {
+			i64(f) != 0
+		}
+		u8, u16, u32, u64 {
+			u64(f) != 0
+		}
+		f32, f64 {
+			f64(f) != 0.0
 		}
 		[]Any {
-			node.all(validate)
+			f.len > 0
 		}
 		map[string]Any {
-			node.values().all(validate)
-		}
-		else {
-			false
+			f.keys().len > 0
 		}
 	}
 }
 
-fn decode(node Any) Value {
-	return match node {
-		bool, string {
-			Value(node)
+pub fn (f Any) str() string {
+	return match f {
+		string {
+			f
+		}
+		bool {
+			if f {
+				'true'
+			} else {
+				'false'
+			}
 		}
 		[]Any {
-			mut child := []Value{cap: node.len}
-			for it in node {
-				child << decode(it)
-			}
-			child
+			'${f.map(|it| it.str()).join(', ')}'
 		}
 		map[string]Any {
-			mut child := map[string]Value{}
-			for key, val in node {
-				child[key] = decode(val)
-			}
-			child
+			'${f.keys().map(|it| it.str()).join(', ')}'
 		}
-		else {
-			node.str()
+		i8, i16, int, i64 {
+			i64(f).str()
+		}
+		u8, u16, u32, u64 {
+			u64(f).str()
+		}
+		f32, f64 {
+			f64(f).str()
 		}
 	}
 }
