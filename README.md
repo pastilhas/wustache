@@ -12,7 +12,7 @@
 
 </div>
 
-is a lightweight and efficient Mustache-like templating engine implemented in V. It provides a simple way to render templates with dynamic content using a context map. It focuses on simplicity &mdash; load the `template` and the `context` as JSON string, and execute a single instruction `render`. it is safe by default, but you can make it more, or less, picky.
+is a lightweight and efficient templating engine written in V. It provides a fast way to render templates with dynamic content. Simple as 1, 2, 3 &mdash; (1) load the `template`, (2) the `context` as JSON, and (3) execute `render`. It is safe by default, but you can make it less picky.
 
 ## Features
 
