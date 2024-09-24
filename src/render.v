@@ -93,7 +93,7 @@ fn (mut t Template) render_section() !string {
 			pos_section {
 				key := tag[1..]
 				end := '${stag}/${key}${etag}'
-				result += t.render_pos_section(key, end) or {
+				result += t.render_sub_section(key, end, true) or {
 					if t.opts.ignore_errors {
 						continue
 					}
@@ -103,7 +103,7 @@ fn (mut t Template) render_section() !string {
 			neg_section {
 				key := tag[1..]
 				end := '${stag}/${key}${etag}'
-				result += t.render_neg_section(key, end) or {
+				result += t.render_sub_section(key, end, false) or {
 					if t.opts.ignore_errors {
 						continue
 					}
@@ -124,7 +124,7 @@ fn (mut t Template) render_section() !string {
 	return result
 }
 
-fn (mut t Template) render_pos_section(key string, end string) !string {
+fn (mut t Template) render_sub_section(key string, end string, positive bool) !string {
 	mut content := ''
 	mut result := ''
 
@@ -139,45 +139,28 @@ fn (mut t Template) render_pos_section(key string, end string) !string {
 
 	mut val := t.lookup(key)!
 
-	if mut val is []Any {
-		// TODO: Optimize re-rendering of static data
-		// TODO: Minimize cloning maps
-		for it in val {
-			old_context := t.context.clone()
-			t.context[iter_var] = it
+	if positive {
+		if mut val is []Any {
+			// TODO: Optimize re-rendering of static data
+			// TODO: Minimize cloning maps
+			for it in val {
+				old_context := t.context.clone()
+				t.context[iter_var] = it
 
-			result += t.render_section()!
+				result += t.render_section()!
 
-			t.context = old_context.clone()
-			t.template = content
+				t.context = old_context.clone()
+				t.template = content
+			}
+		} else {
+			if val.bool() {
+				result = t.render_section()!
+			}
 		}
 	} else {
-		if val.bool() {
+		if !val.bool() {
 			result = t.render_section()!
 		}
-	}
-
-	t.template = old_template
-	return result
-}
-
-fn (mut t Template) render_neg_section(key string, end string) !string {
-	mut content := ''
-	mut result := ''
-
-	i := t.template.index(end) or { return error('Missing end tag for ${key} at ${t.pointer}') }
-
-	content = t.template[..i]
-	t.template = t.template[(i + end.len)..]
-	t.pointer += i + end.len
-
-	old_template := t.template.clone()
-	t.template = content
-
-	val := t.lookup(key)!
-
-	if !val.bool() {
-		result = t.render_section()!
 	}
 
 	t.template = old_template
