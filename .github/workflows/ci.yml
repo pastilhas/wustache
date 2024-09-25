@@ -1,8 +1,8 @@
 name: CI
 
 on:
-    push:
-        branches: [main]
+  push:
+    branches: [ "master" ]
 
 jobs:
   build:
@@ -13,18 +13,17 @@ jobs:
 
     steps:
       - name: Install V
-        uses: vlang/setup-v@v1.4
+        uses: vlang/setup-v@v1
         with:
           check-latest: true
 
       - name: Checkout ${{ github.event.repository.name }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Check if code is formatted
         run: |
           v fmt -diff .
           v fmt -verify .          
-
       - name: Build ${{ github.event.repository.name }}
         run: v .
 
