@@ -40,7 +40,7 @@ fn test_empty_tag() {
 	context := '{ "a": 50 }'
 	template := '{{}}'
 
-	render_with(template, context, Opts{allow_empty_tag:false}) or {
+	render_with(template, context, Opts{ allow_empty_tag: false }) or {
 		assert err.str().starts_with('Empty tag at')
 		return
 	}

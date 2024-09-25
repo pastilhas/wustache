@@ -19,6 +19,8 @@ mut:
 	context  map[string]Any
 	opts     Opts
 	pointer  int
+	stag     string = '{{'
+	etag     string = '}}'
 }
 
 fn new_template(t string, c map[string]Any, o Opts) Template {
@@ -54,21 +56,19 @@ pub fn render_map_with(template string, context map[string]Any, opts Opts) !stri
 
 fn (mut t Template) render_section() !string {
 	mut result := ''
-	mut stag := '{{'
-	mut etag := '}}'
 	mut tag := ''
 
 	for {
-		i := t.template.index(stag) or {
+		i := t.template.index(t.stag) or {
 			result += t.template
 			break
 		}
 
 		result += t.template[..i]
-		t.template = t.template[(i + stag.len)..]
-		t.pointer += i + stag.len
+		t.template = t.template[(i + t.stag.len)..]
+		t.pointer += i + t.stag.len
 
-		j := t.template.index(etag) or {
+		j := t.template.index(t.etag) or {
 			if t.opts.ignore_errors {
 				continue
 			}
@@ -76,8 +76,8 @@ fn (mut t Template) render_section() !string {
 		}
 
 		tag = t.template[..j]
-		t.template = t.template[(j + etag.len)..]
-		t.pointer += j + stag.len
+		t.template = t.template[(j + t.etag.len)..]
+		t.pointer += j + t.stag.len
 
 		if tag.len == 0 {
 			if t.opts.allow_empty_tag {
@@ -86,14 +86,11 @@ fn (mut t Template) render_section() !string {
 			return error('Empty tag at ${t.pointer}')
 		}
 
-		// TODO: Add comments
 		// TODO: Add partials
 		// TODO: Add set delimiter
 		match tag[0] {
 			pos_section {
-				key := tag[1..]
-				end := '${stag}/${key}${etag}'
-				result += t.render_sub_section(key, end, true) or {
+				result += t.render_sub_section(tag, true) or {
 					if t.opts.ignore_errors {
 						continue
 					}
@@ -101,9 +98,7 @@ fn (mut t Template) render_section() !string {
 				}
 			}
 			neg_section {
-				key := tag[1..]
-				end := '${stag}/${key}${etag}'
-				result += t.render_sub_section(key, end, false) or {
+				result += t.render_sub_section(tag, false) or {
 					if t.opts.ignore_errors {
 						continue
 					}
@@ -124,7 +119,9 @@ fn (mut t Template) render_section() !string {
 	return result
 }
 
-fn (mut t Template) render_sub_section(key string, end string, positive bool) !string {
+fn (mut t Template) render_sub_section(tag string, positive bool) !string {
+	key := tag[1..]
+	end := '${t.stag}/${key}${t.etag}'
 	mut content := ''
 	mut result := ''
 
