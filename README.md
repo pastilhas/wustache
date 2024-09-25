@@ -43,8 +43,8 @@ Hello, {{name}}.
 
 Welcome, {{user.name}}. You have {{user.unread}} messages.
 
-<div class="user-card">
-  {{&raw_variable}}
+<div id="login_form">
+  {{&login_form}}
 </div>
 ```
 
