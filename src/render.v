@@ -1,11 +1,13 @@
 module wustache
 
 import encoding.html
+import regex { regex_opt }
 
 const pos_section = `#`
 const neg_section = `^`
 const raw_var = `&`
 const iter_var = '$'
+const tag_regex = r'([#^&]{,1}[\a\A]|$)[\w.]*'
 
 pub struct Opts {
 	allow_empty_tag bool = true
@@ -28,7 +30,6 @@ fn new_template(t string, c map[string]Any, o Opts) Template {
 		template: t
 		context:  c
 		opts:     o
-		pointer:  0
 	}
 }
 
@@ -84,6 +85,14 @@ fn (mut t Template) render_section() !string {
 				continue
 			}
 			return error('Empty tag at ${t.pointer}')
+		}
+
+		re := regex_opt(tag_regex)!
+		if !re.matches_string(tag) {
+			if t.opts.ignore_errors {
+				continue
+			}
+			return error('Invalid tag at ${t.pointer}')
 		}
 
 		// TODO: Add partials
