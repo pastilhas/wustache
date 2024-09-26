@@ -88,9 +88,9 @@ fn (mut t Template) render_section() !string {
 
 		// TODO: Add partials
 		// TODO: Add set delimiter
-		match tag[0] {
+		result += match tag[0] {
 			pos_section {
-				result += t.render_sub_section(tag, true) or {
+				t.render_sub_section(tag, true) or {
 					if t.opts.ignore_errors {
 						continue
 					}
@@ -98,7 +98,7 @@ fn (mut t Template) render_section() !string {
 				}
 			}
 			neg_section {
-				result += t.render_sub_section(tag, false) or {
+				t.render_sub_section(tag, false) or {
 					if t.opts.ignore_errors {
 						continue
 					}
@@ -107,11 +107,11 @@ fn (mut t Template) render_section() !string {
 			}
 			raw_var {
 				val := t.lookup(tag[1..])!
-				result += val.str()
+				val.str()
 			}
 			else {
 				val := t.lookup(tag)!
-				result += html.escape(val.str())
+				html.escape(val.str())
 			}
 		}
 	}
