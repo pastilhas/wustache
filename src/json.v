@@ -59,7 +59,7 @@ fn (f Any) bool() bool {
 			f
 		}
 		string {
-			f == 'true' || (f != 'false' && f != '0' && f != '0.0' && f != '')
+			f.len > 0
 		}
 		i8, i16, int, i64 {
 			i64(f) != 0
